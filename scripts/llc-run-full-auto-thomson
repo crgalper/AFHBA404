@@ -2,12 +2,15 @@
 # file PROJECTS/AFHBA404/scripts/llc-run-full-auto-thomson
 # POST is number of samples in LLC control loop
 # TLEN is the transient capture, overrun to make sure LLC terminates
-POST=${POST:-1000}
+POST=${POST:-100}
 DELAY=${DELAY:-10}
 let TLEN="$POST*120/100"
 
 UUTS="acq2106_145 acq2106_147 acq2106_148 acq2106_149"
-HAPIDIR=/home/dt100/PROJECTS/acq400_hapi
+#HAPIDIR=/home/dt100/PROJECTS/acq400_hapi
+HAPIDIR=/home/dt100/PROJECTS/ACQ400/HAPI/acq400_hapi
+
+
 AFHBA404DIR=/home/dt100/PROJECTS/AFHBA404
 LLCDIR=${AFHBA404DIR}/LLCONTROL
 
@@ -27,7 +30,7 @@ control_program() {
 	export SPADLONGS=16
 # isolcpus=4,5,6,7,8...
 # taskset 0x10 means "run on processor 4"
-	export TASKSET="taskset 0x8"
+	export TASKSET="taskset 0x02"
 	[ "x$TASKSET" != "x" ] && echo TASKSET $TASKSET
 	$TASKSET ./afhba-llcontrol-multiuut $1 &
 	echo wait for llcontrol, PID $CTRLPID

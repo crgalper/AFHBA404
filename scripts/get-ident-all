@@ -8,9 +8,8 @@ fi
 
 PORTS=(A B C D)
 
-for d in /dev/rtm-t.*.ctrl; do
-	d1=${d%*.ctrl}
-	DN=${d1#*.}
+for DN in 0 1 2 3
+do
 	if [ -e /dev/rtm-t.$DN.ctrl/acq_ident ]; then
 		ID=$(cat /dev/rtm-t.$DN.ctrl/acq_ident)
 		if [ "x$ID" != "x" ] &&

@@ -1,0 +1,110 @@
+llc-run-full-auto-two-076-079 UUT1=acq2106_076 UUT2=acq2106_079 POST=75000 TLEN=90000
+acq400_hapi.Acq2106 acq2106_076
+Netclient.init acq2106_076 4220
+Netclient.init acq2106_076 4221
+Netclient.init acq2106_076 4222
+Netclient.init acq2106_076 4223
+Netclient.init acq2106_076 4224
+Netclient.init acq2106_076 4225
+Netclient.init acq2106_076 4226
+Netclient.init acq2106_076 2235
+Netclient.init acq2106_076 4233
+Netclient.init acq2106_076 4232
+acq400_hapi.Acq2106 acq2106_079
+Netclient.init acq2106_079 4220
+Netclient.init acq2106_079 4221
+Netclient.init acq2106_079 4222
+Netclient.init acq2106_079 4225
+Netclient.init acq2106_079 4226
+Netclient.init acq2106_079 2235
+Netclient.init acq2106_079 4233
+Netclient.init acq2106_079 4232
+set_mb_clk 10000000 zclk 100
+Putting CLKDIV at 1
+SYS_CLK_DIST_CLK_SRC, deprecated
+PWM_OFFSET set 132
+/usr/local/mdsplus/lib64/:.:../../../../../Build/x86-linux/Examples/Core/:/home/dt100/MARTe2-dev/Build/x86-linux/Examples/Core/:Core/:/home/dt100/MARTe2-dev/Build/x86-linux/Core/:/home/dt100/MARTe2-components/Build/x86-linux/Components/DataSources/EPICSCA/:/home/dt100/MARTe2-components/Build/x86-linux/Components/DataSources/LinuxTimer/:/home/dt100/MARTe2-components/Build/x86-linux/Components/DataSources/LoggerDataSource/:/home/dt100/MARTe2-components/Build/x86-linux/Components/DataSources/DAN/:/home/dt100/MARTe2-components/Build/x86-linux/Components/DataSources/NI6259/:/home/dt100/MARTe2-components/Build/x86-linux/Components/DataSources/NI6368/:/home/dt100/MARTe2-components/Build/x86-linux/Components/DataSources/SDN/:/home/dt100/MARTe2-components/Build/x86-linux/Components/DataSources/UDP/:/home/dt100/MARTe2-components/Build/x86-linux/Components/DataSources/MDSWriter/:/home/dt100/MARTe2-components/Build/x86-linux/Components/DataSources/MDSSPCWriter/:/home/dt100/MARTe2-components/Build/x86-linux/Components/DataSources/MDSReader/:/home/dt100/MARTe2-components/Build/x86-linux/Components/DataSources/MDSObjWavegen/:/home/dt100/MARTe2-components/Build/x86-linux/Components/DataSources/AFHBA404/:/home/dt100/MARTe2-components/Build/x86-linux/Components/DataSources/RealTimeThreadSynchronisation/:/home/dt100/MARTe2-components/Build/x86-linux/Components/DataSources/FileDataSource/:/home/dt100/MARTe2-components/Build/x86-linux/Components/DataSources/AFHBA404/:/home/dt100/MARTe2-components/Build/x86-linux/Components/GAMs/IOGAM/:/home/dt100/MARTe2-components/Build/x86-linux/Components/GAMs/BaseLib2GAM/:/home/dt100/MARTe2-components/Build/x86-linux/Components/GAMs/ConversionGAM/:/home/dt100/MARTe2-components/Build/x86-linux/Components/GAMs/FilterGAM/:/home/dt100/MARTe2-components/Build/x86-linux/Components/GAMs/StatisticsGAM/:/home/dt100/MARTe2-components/Build/x86-linux/Components/GAMs/WaveformGAM/:/home/dt100/MARTe2-components/Build/x86-linux/Components/GAMs/SimulinkWrapperGAM/:/home/dt100/MARTe2-components/Build/x86-linux/Components/Interfaces/BaseLib2Wrapper/:/home/dt100/MARTe2-components/Build/x86-linux/Components/Interfaces/SysLogger/:/home/dt100/MARTe2-components/Build/x86-linux/Components/Interfaces/EPICS/:/home/dt100/MARTe2-components/Build/x86-linux/Components/Interfaces/MDSObjLoader/:/home/dt100/MARTe2-components/Build/x86-linux/Components/Interfaces/SPCShotManager/
+[Debug - Bootstrap.cpp:78]: Arguments:
+-l = "RealTimeLoader"
+-f = "/home/dt100/MARTe2-examples/Configurations/AFHBATester6.cfg"
+-s = "Run"
+
+[Information - Bootstrap.cpp:148]: Loader parameters:
+Loader = "RealTimeLoader"
+Filename = "/home/dt100/MARTe2-examples/Configurations/AFHBATester6.cfg"
+DefaultCPUs = +1
+Parser = "cdb"
+FirstState = "Run"
+
+[Information - Loader.cpp:62]: DefaultCPUs set to 1
+[OSError - LoadableLibrary.cpp:78]: LoadableLibrary: Failed dlopen(): IOGAM.gam: cannot open shared object file: No such file or directory
+[OSError - LoadableLibrary.cpp:78]: LoadableLibrary: Failed dlopen(): IOGAM.drv: cannot open shared object file: No such file or directory
+[Information - FixedGAMExample1.cpp:68]: Parameter Gain set to 2
+[OSError - LoadableLibrary.cpp:78]: LoadableLibrary: Failed dlopen(): LoggerDataSource.gam: cannot open shared object file: No such file or directory
+[OSError - LoadableLibrary.cpp:78]: LoadableLibrary: Failed dlopen(): LoggerDataSource.drv: cannot open shared object file: No such file or directory
+[OSError - LoadableLibrary.cpp:78]: LoadableLibrary: Failed dlopen(): RealTimeThreadSynchronisation.gam: cannot open shared object file: No such file or directory
+[OSError - LoadableLibrary.cpp:78]: LoadableLibrary: Failed dlopen(): RealTimeThreadSynchronisation.drv: cannot open shared object file: No such file or directory
+[OSError - LoadableLibrary.cpp:78]: LoadableLibrary: Failed dlopen(): AFHBA404.gam: cannot open shared object file: No such file or directory
+[OSError - LoadableLibrary.cpp:78]: LoadableLibrary: Failed dlopen(): AFHBA404.drv: cannot open shared object file: No such file or directory
+[Debug - AFHBA404.cpp:98]: AFHBA404::Initialise called
+[Information - AFHBA404.cpp:156]: %d cycles configured before sending the termination message
+[Debug - AFHBA404.cpp:98]: AFHBA404::Initialise called
+[OSError - LoadableLibrary.cpp:78]: LoadableLibrary: Failed dlopen(): MDSWriter.gam: cannot open shared object file: No such file or directory
+[OSError - LoadableLibrary.cpp:78]: LoadableLibrary: Failed dlopen(): MDSWriter.drv: cannot open shared object file: No such file or directory
+[Information - RealTimeThread.cpp:191]: No StackSize defined for the RealTimeThread Thread1
+[Information - RealTimeApplication.cpp:195]: Going to rtAppBuilder.ConfigureAfterInitialisation()
+[Information - RealTimeApplicationConfigurationBuilder.cpp:70]: Going to InitialiseSignalsDatabase
+[Information - RealTimeApplicationConfigurationBuilder.cpp:76]: Going to FlattenSignalsDatabases
+[Information - RealTimeApplicationConfigurationBuilder.cpp:83]: Going to ResolveDataSources
+[Information - RealTimeApplicationConfigurationBuilder.cpp:90]: Going to VerifyDataSourcesSignals
+[Warning - RealTimeApplicationConfigurationBuilder.cpp:1399]: Default value is not defined for signal: Counter in DDB1, by default it will be zeroed
+[Warning - RealTimeApplicationConfigurationBuilder.cpp:1376]: NumberOfDimensions is not defined for signal: ADCinputs in DDB1 with NumberOfElements > 1, assuming it as 1 (vector)
+[Warning - RealTimeApplicationConfigurationBuilder.cpp:1399]: Default value is not defined for signal: ADCinputs in DDB1, by default it will be zeroed
+[Warning - RealTimeApplicationConfigurationBuilder.cpp:1376]: NumberOfDimensions is not defined for signal: DACs in DDB1 with NumberOfElements > 1, assuming it as 1 (vector)
+[Warning - RealTimeApplicationConfigurationBuilder.cpp:1399]: Default value is not defined for signal: DACs in DDB1, by default it will be zeroed
+[Warning - RealTimeApplicationConfigurationBuilder.cpp:1376]: NumberOfDimensions is not defined for signal: DOs in DDB1 with NumberOfElements > 1, assuming it as 1 (vector)
+[Warning - RealTimeApplicationConfigurationBuilder.cpp:1399]: Default value is not defined for signal: DOs in DDB1, by default it will be zeroed
+[Warning - RealTimeApplicationConfigurationBuilder.cpp:1376]: NumberOfDimensions is not defined for signal: PWMduty in DDB1 with NumberOfElements > 1, assuming it as 1 (vector)
+[Warning - RealTimeApplicationConfigurationBuilder.cpp:1399]: Default value is not defined for signal: PWMduty in DDB1, by default it will be zeroed
+[Warning - RealTimeApplicationConfigurationBuilder.cpp:1399]: Default value is not defined for signal: DiffCounter in DDB1, by default it will be zeroed
+[Warning - RealTimeApplicationConfigurationBuilder.cpp:1399]: Default value is not defined for signal: Time in DDB1, by default it will be zeroed
+[Warning - RealTimeApplicationConfigurationBuilder.cpp:1399]: Default value is not defined for signal: State1.Thread1_CycleTime in Timings, by default it will be zeroed
+[Warning - RealTimeApplicationConfigurationBuilder.cpp:1399]: Default value is not defined for signal: Counter in AFHBA404, by default it will be zeroed
+[Warning - RealTimeApplicationConfigurationBuilder.cpp:1399]: Default value is not defined for signal: Time in AFHBA404, by default it will be zeroed
+[Warning - RealTimeApplicationConfigurationBuilder.cpp:1376]: NumberOfDimensions is not defined for signal: ADCinputs in AFHBA404 with NumberOfElements > 1, assuming it as 1 (vector)
+[Warning - RealTimeApplicationConfigurationBuilder.cpp:1399]: Default value is not defined for signal: ADCinputs in AFHBA404, by default it will be zeroed
+[Warning - RealTimeApplicationConfigurationBuilder.cpp:1376]: NumberOfDimensions is not defined for signal: DACs in AFHBA404out with NumberOfElements > 1, assuming it as 1 (vector)
+[Warning - RealTimeApplicationConfigurationBuilder.cpp:1399]: Default value is not defined for signal: DACs in AFHBA404out, by default it will be zeroed
+[Warning - RealTimeApplicationConfigurationBuilder.cpp:1376]: NumberOfDimensions is not defined for signal: DOs in AFHBA404out with NumberOfElements > 1, assuming it as 1 (vector)
+[Warning - RealTimeApplicationConfigurationBuilder.cpp:1399]: Default value is not defined for signal: DOs in AFHBA404out, by default it will be zeroed
+[Warning - RealTimeApplicationConfigurationBuilder.cpp:1376]: NumberOfDimensions is not defined for signal: PWMduty in AFHBA404out with NumberOfElements > 1, assuming it as 1 (vector)
+[Warning - RealTimeApplicationConfigurationBuilder.cpp:1399]: Default value is not defined for signal: PWMduty in AFHBA404out, by default it will be zeroed
+[Warning - RealTimeApplicationConfigurationBuilder.cpp:1399]: Default value is not defined for signal: Counter in MDSWriter, by default it will be zeroed
+[Warning - RealTimeApplicationConfigurationBuilder.cpp:1399]: Default value is not defined for signal: DiffCounter in MDSWriter, by default it will be zeroed
+[Warning - RealTimeApplicationConfigurationBuilder.cpp:1399]: Default value is not defined for signal: State1_Thread1_CycleTime in MDSWriter, by default it will be zeroed
+[Warning - RealTimeApplicationConfigurationBuilder.cpp:1399]: Default value is not defined for signal: ADC1T1 in MDSWriter, by default it will be zeroed
+[Warning - RealTimeApplicationConfigurationBuilder.cpp:1399]: Default value is not defined for signal: ADC1T2 in MDSWriter, by default it will be zeroed
+[Warning - RealTimeApplicationConfigurationBuilder.cpp:1399]: Default value is not defined for signal: DAC1 in MDSWriter, by default it will be zeroed
+[Information - RealTimeApplicationConfigurationBuilder.cpp:97]: Going to ResolveFunctionSignals
+[Information - RealTimeApplicationConfigurationBuilder.cpp:104]: Going to VerifyFunctionSignals
+[Information - RealTimeApplicationConfigurationBuilder.cpp:111]: Going to ResolveStates
+[Information - RealTimeApplicationConfigurationBuilder.cpp:118]: Going to ResolveConsumersAndProducers
+[Information - RealTimeApplicationConfigurationBuilder.cpp:125]: Going to VerifyConsumersAndProducers
+[Information - RealTimeApplicationConfigurationBuilder.cpp:132]: Going to ResolveFunctionSignalsMemorySize
+[Information - RealTimeApplicationConfigurationBuilder.cpp:139]: Going to ResolveFunctionsMemory
+[Information - RealTimeApplicationConfigurationBuilder.cpp:146]: Going to AssignFunctionsMemoryToDataSource
+[Information - RealTimeApplicationConfigurationBuilder.cpp:153]: Going to AssignBrokersToFunctions
+[Information - RealTimeApplication.cpp:201]: Going to rtAppBuilder.PostConfigureDataSources()
+[Debug - AFHBA404.cpp:224]: AFHBA404::SetConfiguredDatabase called
+[Information - AFHBA404.cpp:488]: The real-time will be set using a frequency of 10000.000000 Hz
+[Debug - AFHBA404.cpp:224]: AFHBA404::SetConfiguredDatabase called
+CRIDBG ok is 1
+[Information - MDSWriterNode.cpp:234]: SamplePhase not specified. Using 0
+[Information - MDSWriterNode.cpp:234]: SamplePhase not specified. Using 0
+[Information - MDSWriterNode.cpp:234]: SamplePhase not specified. Using 0
+[Information - MDSWriterNode.cpp:234]: SamplePhase not specified. Using 0
+[Information - MDSWriterNode.cpp:234]: SamplePhase not specified. Using 0
+[Information - MDSWriterNode.cpp:234]: SamplePhase not specified. Using 0
+CRIDBG ok is 1 just before OpenTree call
+CRIDBG: MDSWriter::OpenTree called with shotno:  20
+Going to open the pulse acq2106_076 shot 20

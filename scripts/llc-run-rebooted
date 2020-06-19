@@ -1,0 +1,18 @@
+#!/bin/bash
+
+echo Rebooting acq2106_076
+ssh root@acq2106_076 'reboot'
+echo Waiting 5 minutes ...
+sleep 300
+echo turning on acq2106_076 local us timer
+start_2106_076_us_clock
+echo Rebooting acq2106_079
+ssh root@acq2106_079 'reboot'
+echo Waiting 5 minutes ...
+sleep 300
+
+echo Running 2 shots ...
+forxv 2 ./llc-run-full-auto-two-076-079
+
+#echo Waiting 5 minutes ...
+#sleep 300

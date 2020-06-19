@@ -1,0 +1,3 @@
+#!/bin/sh
+
+ssh root@acq2106_076 '/usr/local/bin/set.site 0 spad1_us 1,2,1'

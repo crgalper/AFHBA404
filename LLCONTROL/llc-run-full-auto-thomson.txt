@@ -1,0 +1,1 @@
+llc-run-full-auto-thomson acq2106_145 acq2106_147 acq2106_148 acq2106_149 POST=1000 TLEN=1200 DELAY=10

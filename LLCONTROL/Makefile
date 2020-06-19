@@ -29,8 +29,7 @@ APPS := afhba-llcontrol-example afhba-llcontrol-zcopy \
 	afhba-llcontrol-two-fiber \
 	afhba-llcontrol-multiuut \
 	afhba-bufferAB-480-pwm pwm_set_channel pwm_set_duty pwm_control \
-	afhba-llcontrol-abn \
-	afhba-llcontrol-multiuut-4AI1AO1DX
+	afhba-llcontrol-abn
 	
 apps: $(APPS)
 

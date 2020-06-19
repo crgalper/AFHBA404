@@ -43,7 +43,7 @@
 #include "afhba-get_shared_mapping.h"
 
 
-#define HB_FILE 	"/dev/rtm-t.%lu"
+#define HB_FILE 	"/dev/rtm-t.%d"
 #define LOG_FILE	"afhba.%d.log"
 
 #define HB1		"/dev/rtm-t.%d.data/hb01"
@@ -154,21 +154,6 @@ void setAffinity(unsigned cpu_mask)
         }
 }
 
-#define MV100   (32768/100)
-
-short* make_ao_ident(int ao_chan, int ao_ident)
-{
-        short* ids = (short*)calloc(ao_chan, sizeof(short));
-        if (ao_ident){
-                int ic;
-
-                for (ic = 0; ic < ao_chan; ++ic){
-                        ids[ic] = ic*MV100*ao_ident;
-                }
-        }
-        return ids;
-}
-
 
 void goRealTime(void)
 {
@@ -208,7 +193,7 @@ void check_tlatch_action(void *local_buffer)
 {
 	static unsigned tl0;
 	static int errcount;
-	short *ai_buffer = (short*)local_buffer;
+	short *ai_buffer = local_buffer;
 
 	unsigned tl1 = *TLATCH(local_buffer);
 	if (tl1 != tl0+1){

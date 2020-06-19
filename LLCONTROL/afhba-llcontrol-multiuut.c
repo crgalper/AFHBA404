@@ -201,6 +201,7 @@ void run(void (*action)(void*))
 				++pollcat[id];
 			}
 			tl0[id] = tl1;
+			//printf("Sampled arrived on driver %d\n",id);
 		}
 
 		FORALL {

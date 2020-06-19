@@ -55,7 +55,7 @@ void* host_buffer;
 int fd;
 int nsamples = 10000000;		/* 10s at 1MSPS */
 int samples_buffer = 1;			/* set > 1 to decimate max 16*64bytes */
-#define WD_BIT 1
+
 int verbose;
 
 void (*G_action)(void*);
@@ -81,8 +81,8 @@ struct XLLC_DEF xllc_def = {
 };
 
 #define DEF_AO_CHAN	32
-int ao_chan = DEF_AO_CHAN;
-#define VO_LEN  (ao_chan*sizeof(short) + (has_do32?sizeof(unsigned):0))
+int aochan = DEF_AO_CHAN;
+#define VO_LEN  (aochan*sizeof(short) + (has_do32?sizeof(unsigned):0))
 
 #define DO_IX	(16)		/* longwords */
 
@@ -92,6 +92,19 @@ void control_dup1(short *ao, short *ai);
 void (*G_control)(short *ao, short *ai) = control_dup1;
 
 #define MV100   (32768/100)
+
+short* make_ao_ident(int ao_ident)
+{
+        short* ids = calloc(aochan, sizeof(short));
+        if (ao_ident){
+                int ic;
+
+                for (ic = 0; ic < aochan; ++ic){
+                        ids[ic] = ic*MV100*ao_ident;
+                }
+        }
+        return ids;
+}
 
 int FFNLUT;
 void control_feedforward(short *ao, short *ai);
@@ -126,8 +139,8 @@ void ui(int argc, char* argv[])
 		fprintf(stderr, "AICHAN (nchan) set %d\n", nchan);
 	}
 	if (getenv("AOCHAN")){
-		ao_chan = atoi(getenv("AOCHAN"));
-		fprintf(stderr, "AOCHAN set %d\n", ao_chan);
+		aochan = atoi(getenv("AOCHAN"));
+		fprintf(stderr, "AOCHAN set %d\n", aochan);
 	}
 	if (getenv("POLARITY")){
 		G_POLARITY = atoi(getenv("POLARITY"));
@@ -153,7 +166,7 @@ void ui(int argc, char* argv[])
                 if (getenv("AO_IDENT")){
                         ao_ident = atoi(getenv("AO_IDENT"));
                 }
-                AO_IDENT = make_ao_ident(ao_chan, ao_ident);
+                AO_IDENT = make_ao_ident(ao_ident);
         }
 
 	if (getenv("SPADLONGS")){
@@ -240,7 +253,7 @@ void control_dup1(short *ao, short *ai)
 {
         int ii;
 
-        for (ii = 0; ii < ao_chan; ii++){
+        for (ii = 0; ii < aochan; ii++){
                 ao[ii] = AO_IDENT[ii] + ai[DUP1];
         }
 
@@ -272,7 +285,7 @@ void control_feedforward(short *ao, short *ai)
 
 	short xx = ff(cursor++);
 
-        for (ii = 0; ii < ao_chan; ii++){
+        for (ii = 0; ii < aochan; ii++){
                 ao[ii] = AO_IDENT[ii] + xx;
         }
 
@@ -285,21 +298,13 @@ void control_feedforward(short *ao, short *ai)
 void control_example2(short *ao, short *ai)
 {
 	int ii;
-	for (ii = 0; ii < ao_chan; ii += 2){
+	for (ii = 0; ii < aochan; ii += 2){
 		ao[ii] = G_POLARITY * ai[0];
-		ao[ii+1] = (((ii&1) != 0? ii: -ii)*ai[0])/ao_chan;
+		ao[ii+1] = (((ii&1) != 0? ii: -ii)*ai[0])/aochan;
 	}
 	if (has_do32){
 		copy_tlatch_to_do32(ao, ai);
 	}
-}
-
-
-void dio_watchdog(short *ao, short *ai)
-{
-        unsigned* dox = (unsigned *)ao;
-
-	dox[DO_IX] ^= WD_BIT;
 }
 
 
@@ -311,7 +316,6 @@ void run(void (*control)(short *ao, short *ai), void (*action)(void*))
 	unsigned sample;
 	int println = 0;
 	int pollcat = 0;
-	int we_blew_it = 0;
 
 	mlockall(MCL_CURRENT);
 	memset(host_buffer, 0, VI_LEN);
@@ -320,14 +324,11 @@ void run(void (*control)(short *ao, short *ai), void (*action)(void*))
 	}
 
 	for (sample = 0; sample <= nsamples; ++sample, tl0 = tl1, pollcat = 0){
-		while((tl1 = TLATCH(host_buffer)[0]) == tl0){
-			dio_watchdog(ao_buffer, ai_buffer);
-			sched_fifo_priority>1 || sched_yield();
-			++pollcat;
-		}
 		memcpy(ai_buffer, host_buffer, VI_LEN);
-		if (TLATCH(ai_buffer)[0] != tl1){
-			++we_blew_it;
+		while((tl1 = TLATCH(ai_buffer)[0]) == tl0){
+			sched_yield();
+			memcpy(ai_buffer, host_buffer, VI_LEN);
+			++pollcat;
 		}
 		control(ao_buffer, ai_buffer);
 		TLATCH(ai_buffer)[2] = pollcat;
@@ -337,10 +338,6 @@ void run(void (*control)(short *ao, short *ai), void (*action)(void*))
 		if (verbose){
 			print_sample(sample, tl1);
 		}
-	}
-	
-	if (we_blew_it){
-		fprintf(stderr, "we_blew_it %d\n", we_blew_it);
 	}
 }
 

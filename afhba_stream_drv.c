@@ -39,7 +39,7 @@
 
 #include <linux/version.h>
 
-#define REVID	"R1070"
+#define REVID	"R1067"
 
 #define DEF_BUFFER_LEN 0x100000
 
@@ -986,34 +986,103 @@ int afs_init_buffers(struct AFHBA_DEV* adev)
 	return 0;
 }
 
-static irqreturn_t afs_cos_isr(int irq, void *data)
+#ifdef INTERRUPTS_WORK_OK
+static irqreturn_t afs_rx_isr(int irq, void *data)
+{
+	struct AFHBA_DEV* adev = (struct AFHBA_DEV*)data;
+	struct AFHBA_STREAM_DEV* sdev = adev->stream_dev;
+
+	dev_dbg(pdev(adev), "01 irq %d", irq);
+
+
+       if (sdev->job.buffers_demand == 0 &&
+		       sdev->job.please_stop != PS_PLEASE_STOP){
+	       return !IRQ_HANDLED;
+       }
+
+       sdev->job.ints++;
+       set_bit(WORK_REQUEST, &sdev->work.w_to_do);
+       wake_up_interruptible(&sdev->work.w_waitq);
+
+       dev_dbg(pdev(adev), "99");
+       return IRQ_HANDLED;
+}
+
+static irqreturn_t afs_null_isr(int irq, void* data)
 {
 	struct AFHBA_DEV* adev = (struct AFHBA_DEV*)data;
 
-	unsigned cr = afhba_read_reg(adev, HOST_PCIE_INTERRUPT_REG);
-	afhba_write_reg(adev, HOST_PCIE_INTERRUPT_REG, cr);
-	dev_info(pdev(adev), "afs_cos_isr %08x", cr);
-
+	dev_info(pdev(adev), "afs_null_isr %d", irq);
 	return IRQ_HANDLED;
 }
 
 
+static int port_request_irq(struct AFHBA_DEV* adev, int port)
+{
+	static const char* irq_names[4] = {
+		"%sA-dma", "%sB-dma", "%s-Aline", "%s-Bline"
+	};
+	struct AFHBA_STREAM_DEV* sdev = adev->stream_dev;
+	struct pci_dev *dev = adev->pci_dev;
+	int rc;
+
+	snprintf(sdev->irq_names[port+0], 32, irq_names[port+0], adev->name);
+
+	rc = request_irq(dev->irq+port+0, afs_rx_isr,
+		 	IRQF_SHARED, sdev->irq_names[port+0], adev);
+	if (rc){
+		dev_err(pdev(adev), "request_irq %d failed", dev->irq+port+0);
+		return rc;
+	}
+
+	snprintf(sdev->irq_names[port+2], 32, irq_names[port+2], adev->name);
+	rc = request_irq(dev->irq+port+2, afs_null_isr, IRQF_SHARED,
+			sdev->irq_names[port+2], adev);
+	if (rc){
+		dev_err(pdev(adev), "request_irq %d failed", dev->irq+port+2);
+	}else{
+		dev_info(pdev(adev), "request_irq %s %d OK",
+				sdev->irq_names[port+2], dev->irq+port+2);
+	}
+	return rc;
+}
+#endif
 
 static int hook_interrupts(struct AFHBA_DEV* adev)
 {
-	int rc = pci_enable_msi(adev->pci_dev);
-	if (rc < 0){
-		dev_err(pdev(adev), "pci_enable_msi_exact(%d) FAILED", 1);
-		return rc;
+#ifdef INTERRUPTS_WORK_OK
+	/* non peer case must happen first */
+	if (adev->peer == 0){
+		struct pci_dev *dev = adev->pci_dev;
+		int nvec = 4;
+		int rc;
+
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,11,0))
+		rc = pci_enable_msi_block(dev, nvec = 4);
+		if (rc < 0){
+			dev_warn(pdev(adev), "pci_enable_msi_block() returned %d", rc);
+			rc = pci_enable_msi(dev);
+			nvec = 1;
+			if (rc < 0){
+				dev_warn(pdev(adev), "pci_enable_msi() failed");
+			}
+			return rc;
+		}
+#else
+		rc = pci_enable_msi_exact(dev, nvec);
+#endif
+		if (rc < 0){
+			dev_err(pdev(adev), "pci_enable_msi_exact(%d) FAILED", nvec);
+			return rc;
+		}
+
+		return port_request_irq(adev, 0);
+	}else{
+		return port_request_irq(adev, 1);
 	}
-	rc = request_irq(adev->pci_dev->irq, afs_cos_isr, IRQF_SHARED, "afhba", adev);
-	if (rc < 0) {
-		pr_warn("afhba.%d: request_irq =%d failed!\n",
-				adev->idx, adev->pci_dev->irq);
-		pci_disable_msi(adev->pci_dev);
-		return rc;
-	}
+#else
 	return 0;
+#endif
 }
 
 
@@ -1227,6 +1296,8 @@ static int afs_isr_work(void *arg)
 static void startWork(struct AFHBA_DEV *adev)
 {
 	struct AFHBA_STREAM_DEV *sdev = adev->stream_dev;
+// isr kernel threads commented out because on >2 SFP installed the kthread number 3 seems to be
+// flooded of interrupts and hangs the system
 	sdev->work.w_task = kthread_run(afs_isr_work, adev, adev->name);
 	sdev->work.mon_task = kthread_run(as_mon, adev, adev->mon_name);
 }
@@ -2040,9 +2111,9 @@ static ssize_t store_com_trg(
 
 	if (sscanf(buf, "%x", &tv) == 1){
 		_afs_write_comreg(adev, COM_SOFT_TRIGGER, COM_SOFT_TRIGGER_EN);
-		afhba_write_reg(adev, HOST_TEST_REG, tv);   /* forces 1usec high time */
-		afhba_read_reg(adev, HOST_TEST_REG);
+		msleep(10);
 		_afs_write_comreg(adev, COM_SOFT_TRIGGER, ~COM_SOFT_TRIGGER_EN);
+		afhba_write_reg(adev, HOST_TEST_REG, tv);
 		return strlen(buf);
 	}else{
 		return -1;
@@ -2065,7 +2136,7 @@ static const struct attribute *dev_attrs[] = {
 
 void afs_create_sysfs(struct AFHBA_DEV *adev)
 {
-	const struct attribute ** attrs = dev_attrs;
+	static const struct attribute ** attrs = dev_attrs;
 	int rc;
 
 	if (adev->remote_com_bar == -1 ){
@@ -2083,12 +2154,10 @@ int afhba_stream_drv_init(struct AFHBA_DEV* adev)
 {
 	adev->stream_dev = kzalloc(sizeof(struct AFHBA_STREAM_DEV), GFP_KERNEL);
 
-	dev_info(pdev(adev), "afhba_stream_drv_init %s name:%s idx:%d", REVID, adev->name, adev->idx);
+	dev_info(pdev(adev), "afhba_stream_drv_init %s", REVID);
 
 	afs_init_buffers(adev);
-	if (adev->peer == 0){
-		hook_interrupts(adev);
-	}
+	hook_interrupts(adev);
 	startWork(adev);
 	adev->stream_fops = &afs_fops;
 	afs_init_procfs(adev);

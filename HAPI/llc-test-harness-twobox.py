@@ -73,7 +73,7 @@ def init_ao(uut, slave=False):
     if PWMSITES != "":
         for pwmsite in PWMSITES.split(','):
             pwm = "s{}".format(pwmsite)
-            uut.svc[pwm].pwm_clkdiv = "%x" % (1000)
+            uut.svc[pwm].pwm_clkdiv = "%x" % (10)
     if DOSITES != "":
 
         print "configuring for DO"
